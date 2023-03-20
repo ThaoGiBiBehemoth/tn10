@@ -15,5 +15,19 @@ class ApplicationController < ActionController::API
         nil
       end
     end
-  end  
+  end
+
+  def authorized_user
+    decoded_token = decode_token()
+    if decoded_token
+      user_id = decode_token[0]['user_id']
+      @user = User.find_by_id(user_id)
+    end
+  end
+
+  def authorize
+    unless authorized_user
+      render json: { message: 'You must log in to access.' }, status: 401 #:unauthorized 
+    end
+  end
 end
